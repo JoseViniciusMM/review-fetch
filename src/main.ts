@@ -5,12 +5,18 @@ interface Post {
   body: string;
 }
 
+interface infoProdutos {
+  products: number;
+  total: number;
+  skip: number;
+  limit: number;
+}
 interface Produtos {
   id: number;
   title: string;
   description: string;
   category: string;
-  prince: number;
+  price: number;
   discountPercentage: number;
   rating: number;
   stock: number;
@@ -25,14 +31,14 @@ interface Produtos {
   warrantyInformation: string;
   shippingInformation: string;
   availabilityStatus: string;
-  reviews: 
-    {
-      rating: number;
-      comment: string;
-      date: string;
-      reviewerName: string;
-      reviewerEmail: string;
-    }[];
+  // reviews: 
+  //   {
+  //     rating: number;
+  //     comment: string;
+  //     date: string;
+  //     reviewerName: string;
+  //     reviewerEmail: string;
+  //   }[];
   returnPolicy: string;
   minimumOrderQuantity: number;
   meta: {
@@ -46,6 +52,7 @@ interface Produtos {
 }
 
 const products: Produtos[] = []
+const infoProducts: infoProdutos[] = []
 
 async function fetchProdutos () {
   const response = await fetch('https://dummyjson.com/products');
@@ -58,15 +65,36 @@ async function fetchProdutos () {
   products.push(...data);
 }
 
+async function fetchProdutos2 () {
+  const response = await fetch('https://dummyjson.com/products');
+
+  if (!response.ok) {
+    throw new Error(`Erro ao consultar a API: ${response.status}`);
+  }
+
+  const data: infoProdutos[] = await response.json();
+  infoProducts.push(...data);
+}
+
+
+function printProducts2(products: infoProdutos[]){
+  products.forEach(p => {
+    console.log(`${p.products} ${p.total} ${p.skip} ${p.limit}`);
+  });
+}
+
 function printProducts(products: Produtos[]){
   products.forEach(p => {
-    console.log(`${p.id} ${p.title} ${p.description} ${p.category} ${p.prince} ${p.discountPercentage} ${p.rating} ${p.stock} ${p.tags} ${p.brand} ${p.sku} ${p.dimensions.width} ${p.dimensions.height} ${p.dimensions.depth} ${p.warrantyInformation} ${p.shippingInformation} ${p.availabilityStatus} ${p.reviews[0].rating} ${p.reviews[0].comment} ${p.reviews[0].date} ${p.reviews[0].reviewerName} ${p.reviews[0].reviewerEmail}`);
+    console.log(`${p.id} ${p.title} ${p.description} ${p.category} ${p.price} ${p.discountPercentage} ${p.rating} ${p.stock} ${p.tags} ${p.brand} ${p.sku} ${p.dimensions.width} ${p.dimensions.height} ${p.dimensions.depth} ${p.warrantyInformation} ${p.shippingInformation} ${p.availabilityStatus}`);
   });
 }
 
 
+await fetchProdutos2();
 await fetchProdutos();
+
 printProducts(products);
+printProducts2(infoProducts);
 
 
 
