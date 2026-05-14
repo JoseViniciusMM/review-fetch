@@ -5,8 +5,8 @@ interface Post {
   body: string;
 }
 
-interface infoProdutos {
-  products: number;
+interface ProductsResponse {
+  products: Produtos[];
   total: number;
   skip: number;
   limit: number;
@@ -52,7 +52,7 @@ interface Produtos {
 }
 
 const products: Produtos[] = []
-const infoProducts: infoProdutos[] = []
+let infoProducts: ProductsResponse | null = null
 
 async function fetchProdutos () {
   const response = await fetch('https://dummyjson.com/products');
@@ -61,8 +61,8 @@ async function fetchProdutos () {
     throw new Error(`Erro ao consultar a API: ${response.status}`);
   }
 
-  const data: Produtos[] = await response.json();
-  products.push(...data);
+  const data: ProductsResponse = await response.json();
+  products.push(...data.products);
 }
 
 async function fetchProdutos2 () {
@@ -72,15 +72,18 @@ async function fetchProdutos2 () {
     throw new Error(`Erro ao consultar a API: ${response.status}`);
   }
 
-  const data: infoProdutos[] = await response.json();
-  infoProducts.push(...data);
+  const data: ProductsResponse = await response.json();
+  infoProducts = data;
 }
 
 
-function printProducts2(products: infoProdutos[]){
-  products.forEach(p => {
-    console.log(`${p.products} ${p.total} ${p.skip} ${p.limit}`);
-  });
+function printProducts2(info: ProductsResponse | null){
+  if (!info) {
+    console.log('Nenhuma informação de produto disponível');
+    return;
+  }
+
+  console.log(`${info.products.length} ${info.total} ${info.skip} ${info.limit}`);
 }
 
 function printProducts(products: Produtos[]){
